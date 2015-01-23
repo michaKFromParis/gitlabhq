@@ -1,6 +1,8 @@
 require 'gon'
 
 class ApplicationController < ActionController::Base
+  include Gitlab::CurrentSettings
+
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!
   before_filter :reject_blocked!
@@ -13,7 +15,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
 
-  helper_method :abilities, :can?
+  helper_method :abilities, :can?, :current_application_settings
 
   rescue_from Encoding::CompatibilityError do |exception|
     log_exception(exception)
@@ -44,6 +46,17 @@ class ApplicationController < ActionController::Base
       # sign in token, you can simply remove store: false.
       sign_in user, store: false
     end
+  end
+
+  def authenticate_user!(*args)
+    # If user is not signe-in and tries to access root_path - redirect him to landing page
+    if current_application_settings.home_page_url.present?
+      if current_user.nil? && controller_name == 'dashboard' && action_name == 'show'
+        redirect_to current_application_settings.home_page_url and return
+      end
+    end
+
+    super(*args)
   end
 
   def log_exception(exception)
@@ -257,10 +270,6 @@ class ApplicationController < ActionController::Base
       # or improve current implementation to filter only issues you
       # created or assigned or mentioned
       #@filter_params[:authorized_only] = true
-
-      unless @filter_params[:assignee_id]
-        @filter_params[:assignee_id] = current_user.id
-      end
     end
 
     @filter_params

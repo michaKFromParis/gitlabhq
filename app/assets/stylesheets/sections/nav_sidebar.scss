@@ -1,8 +1,17 @@
 .page-with-sidebar {
   background: #F5F5F5;
+
+  .sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-right: 1px solid #EAEAEA;
+  }
 }
 
 .sidebar-wrapper {
+  z-index: 99;
   overflow-y: auto;
   background: #F5F5F5;
 }
@@ -60,7 +69,7 @@
     font-size: 13px;
     line-height: 20px;
     text-shadow: 0 1px 2px #FFF;
-    padding-left: 67px;
+    padding-left: 20px;
 
     &:hover {
       text-decoration: none;
@@ -75,6 +84,7 @@
     i {
       width: 20px;
       color: #888;
+      margin-right: 23px;
     }
   }
 }
@@ -84,29 +94,17 @@
   padding-left: 0px;
 
   li {
-    line-height: 28px;
-    font-size: 12px;
     list-style: none;
-
-    a {
-      padding: 5px 15px;
-      font-size: 12px;
-      padding-left: 67px;
-    }
   }
 }
 
-@media(min-width:768px) {
+@mixin expanded-sidebar {
   .page-with-sidebar {
     padding-left: 250px;
   }
 
   .sidebar-wrapper {
     width: 250px;
-    position: absolute;
-    left: 250px;
-    height: 100%;
-    margin-left: -250px;
 
     .nav-sidebar {
       margin-top: 20px;
@@ -118,6 +116,42 @@
 
   .content-wrapper {
     padding: 20px;
-    border-left: 1px solid #EAEAEA;
   }
+}
+
+@mixin folded-sidebar {
+  .page-with-sidebar {
+    padding-left: 50px;
+  }
+
+  .sidebar-wrapper {
+    width: 52px;
+    overflow-x: hidden;
+
+    .nav-sidebar {
+      margin-top: 20px;
+      position: absolute;
+      top: 45px;
+      width: 52px;
+
+      li a {
+        padding-left: 18px;
+        font-size: 14px;
+        padding: 10px 15px;
+        text-align: center;
+
+        & > span {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $screen-md-max) {
+  @include folded-sidebar;
+}
+
+@media(min-width: $screen-md-max) {
+  @include expanded-sidebar;
 }
