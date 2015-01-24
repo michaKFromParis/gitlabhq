@@ -17,12 +17,15 @@
               = brand_image
               = brand_text
             - else
-              %h3 Open source software to collaborate on code
+              .brand-image.default-brand-image.hidden-sm.hidden-xs
+                = image_tag 'brand_logo.png'
+              .brand_text.hidden-xs
+              %h3 Your Art Director will love you
 
               %p
-                Manage git repositories with fine grained access controls that keep your code secure.
-                Perform code reviews and enhance collaboration with merge requests.
-                Each project can also have an issue tracker and a wiki.
+                Maximize creative iterations, minimize QA and make people happy.
+                Design, Preview Instantly and let us build it in the cloud for you.
+                Share it, Publish it and track it. It's that simple. And free.
 
             - if extra_sign_in_text.present?
               = markdown(extra_sign_in_text)

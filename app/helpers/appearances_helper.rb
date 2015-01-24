@@ -4,7 +4,7 @@ module AppearancesHelper
   end
 
   def brand_title
-    'Sparks Hub'
+    'Sparks Lab'
   end
 
   def brand_image
