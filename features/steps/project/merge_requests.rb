@@ -173,7 +173,9 @@ class Spinach::Features::ProjectMergeRequests < Spinach::FeatureSteps
       merge!: true,
     )
 
-    click_button "Accept Merge Request"
+    within '.can_be_merged' do
+      click_button "Accept Merge Request"
+    end
   end
 
   step 'I should see merged request' do
@@ -194,13 +196,13 @@ class Spinach::Features::ProjectMergeRequests < Spinach::FeatureSteps
 
   step 'I click link "Hide inline discussion" of the second file' do
     within '.files [id^=diff]:nth-child(2)' do
-      click_link "Diff comments"
+      click_link 'Show/Hide comments'
     end
   end
 
   step 'I click link "Show inline discussion" of the second file' do
     within '.files [id^=diff]:nth-child(2)' do
-      click_link "Diff comments"
+      click_link 'Show/Hide comments'
     end
   end
 
@@ -251,7 +253,7 @@ class Spinach::Features::ProjectMergeRequests < Spinach::FeatureSteps
   end
 
   step 'I should still see a comment like "Line is correct" in the first file' do
-    within '.files [id^=diff]:nth-child(1) .note-text' do
+    within '.files [id^=diff]:nth-child(1) .note-body > .note-text' do
       page.should have_visible_content "Line is correct"
     end
   end
@@ -269,7 +271,7 @@ class Spinach::Features::ProjectMergeRequests < Spinach::FeatureSteps
   end
 
   step 'I should see comments on the side-by-side diff page' do
-    within '.files [id^=diff]:nth-child(1) .parallel .note-text' do
+    within '.files [id^=diff]:nth-child(1) .parallel .note-body > .note-text' do
       page.should have_visible_content "Line is correct"
     end
   end

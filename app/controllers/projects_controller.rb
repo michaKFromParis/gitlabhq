@@ -5,16 +5,17 @@ class ProjectsController < ApplicationController
 
   # Authorize
   before_filter :authorize_admin_project!, only: [:edit, :update, :destroy, :transfer, :archive, :unarchive]
+  before_filter :set_title, only: [:new, :create]
+  before_filter :event_filter, only: :show
 
   layout 'navless', only: [:new, :create, :fork]
-  before_filter :set_title, only: [:new, :create]
 
   def new
     @project = Project.new
   end
 
   def edit
-    render 'edit', layout: "project_settings"
+    render 'edit', layout: 'project_settings'
   end
 
   def create
@@ -36,7 +37,7 @@ class ProjectsController < ApplicationController
         format.html { redirect_to edit_project_path(@project), notice: 'Project was successfully updated.' }
         format.js
       else
-        format.html { render "edit", layout: "project_settings" }
+        format.html { render 'edit', layout: 'project_settings' }
         format.js
       end
     end
@@ -56,9 +57,6 @@ class ProjectsController < ApplicationController
     end
 
     limit = (params[:limit] || 20).to_i
-    @events = @project.events.recent
-    @events = event_filter.apply_filter(@events)
-    @events = @events.limit(limit).offset(params[:offset] || 0)
 
     @show_star = !(current_user && current_user.starred?(@project))
 
@@ -66,17 +64,22 @@ class ProjectsController < ApplicationController
       format.html do
         if @project.repository_exists?
           if @project.empty_repo?
-            render "projects/empty", layout: user_layout
+            render 'projects/empty', layout: user_layout
           else
             @last_push = current_user.recent_push(@project.id) if current_user
             render :show, layout: user_layout
           end
         else
-          render "projects/no_repo", layout: user_layout
+          render 'projects/no_repo', layout: user_layout
         end
       end
 
-      format.json { pager_json("events/_events", @events.count) }
+      format.json do
+        @events = @project.events.recent
+        @events = event_filter.apply_filter(@events).with_associations
+        @events = @events.limit(limit).offset(params[:offset] || 0)
+        pager_json('events/_events', @events.count)
+      end
     end
   end
 
@@ -87,9 +90,9 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        flash[:alert] = "Project deleted."
+        flash[:alert] = 'Project deleted.'
 
-        if request.referer.include?("/admin")
+        if request.referer.include?('/admin')
           redirect_to admin_projects_path
         else
           redirect_to projects_dashboard_path
@@ -102,24 +105,17 @@ class ProjectsController < ApplicationController
     note_type = params['type']
     note_id = params['type_id']
     autocomplete = ::Projects::AutocompleteService.new(@project)
-    participants = ::Projects::ParticipantsService.new(@project).execute(note_type, note_id)
-
-    emojis = Emoji.names.map do |e|
-      {
-        name: e,
-        path: view_context.image_url("emoji/#{e}.png")
-      }
-    end
+    participants = ::Projects::ParticipantsService.new(@project, current_user).execute(note_type, note_id)
 
     @suggestions = {
-      emojis: emojis,
+      emojis: autocomplete_emojis,
       issues: autocomplete.issues,
       mergerequests: autocomplete.merge_requests,
       members: participants
     }
 
     respond_to do |format|
-      format.json { render :json => @suggestions }
+      format.json { render json: @suggestions }
     end
   end
 
@@ -148,7 +144,7 @@ class ProjectsController < ApplicationController
       if link_to_image
         format.json { render json: { link: link_to_image } }
       else
-        format.json { render json: "Invalid file.", status: :unprocessable_entity }
+        format.json { render json: 'Invalid file.', status: :unprocessable_entity }
       end
     end
   end
@@ -179,14 +175,25 @@ class ProjectsController < ApplicationController
   end
 
   def user_layout
-    current_user ? "projects" : "public_projects"
+    current_user ? 'projects' : 'public_projects'
   end
 
   def project_params
     params.require(:project).permit(
       :name, :path, :description, :issues_tracker, :tag_list,
       :issues_enabled, :merge_requests_enabled, :snippets_enabled, :issues_tracker_id, :default_branch,
-      :wiki_enabled, :visibility_level, :import_url, :last_activity_at, :namespace_id
+      :wiki_enabled, :visibility_level, :import_url, :last_activity_at, :namespace_id, :avatar
     )
+  end
+
+  def autocomplete_emojis
+    Rails.cache.fetch("autocomplete-emoji-#{Emoji::VERSION}") do
+      Emoji.names.map do |e|
+        {
+          name: e,
+          path: view_context.image_url("emoji/#{e}.png")
+        }
+      end
+    end
   end
 end
