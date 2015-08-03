@@ -2,14 +2,20 @@
 #
 # Table name: services
 #
-#  id         :integer          not null, primary key
-#  type       :string(255)
-#  title      :string(255)
-#  project_id :integer          not null
-#  created_at :datetime
-#  updated_at :datetime
-#  active     :boolean          default(FALSE), not null
-#  properties :text
+#  id                    :integer          not null, primary key
+#  type                  :string(255)
+#  title                 :string(255)
+#  project_id            :integer
+#  created_at            :datetime
+#  updated_at            :datetime
+#  active                :boolean          default(FALSE), not null
+#  properties            :text
+#  template              :boolean          default(FALSE)
+#  push_events           :boolean          default(TRUE)
+#  issues_events         :boolean          default(TRUE)
+#  merge_requests_events :boolean          default(TRUE)
+#  tag_push_events       :boolean          default(TRUE)
+#  note_events           :boolean          default(TRUE), not null
 #
 
 require 'spec_helper'
@@ -26,7 +32,7 @@ describe AssemblaService, models: true do
 
     before do
       @assembla_service = AssemblaService.new
-      @assembla_service.stub(
+      allow(@assembla_service).to receive_messages(
         project_id: project.id,
         project: project,
         service_hook: true,

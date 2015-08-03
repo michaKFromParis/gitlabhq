@@ -39,20 +39,16 @@ describe API::API, api: true  do
   end
 
   describe "POST /projects/:id/repository/files" do
-    let(:valid_params) {
+    let(:valid_params) do
       {
         file_path: 'newfile.rb',
         branch_name: 'master',
         content: 'puts 8',
         commit_message: 'Added newfile'
       }
-    }
+    end
 
     it "should create a new file in project repo" do
-      Gitlab::Satellite::NewFileAction.any_instance.stub(
-        commit!: true,
-      )
-
       post api("/projects/#{project.id}/repository/files", user), valid_params
       expect(response.status).to eq(201)
       expect(json_response['file_path']).to eq('newfile.rb')
@@ -63,10 +59,9 @@ describe API::API, api: true  do
       expect(response.status).to eq(400)
     end
 
-    it "should return a 400 if satellite fails to create file" do
-      Gitlab::Satellite::NewFileAction.any_instance.stub(
-        commit!: false,
-      )
+    it "should return a 400 if editor fails to create file" do
+      allow_any_instance_of(Repository).to receive(:commit_file).
+        and_return(false)
 
       post api("/projects/#{project.id}/repository/files", user), valid_params
       expect(response.status).to eq(400)
@@ -74,20 +69,16 @@ describe API::API, api: true  do
   end
 
   describe "PUT /projects/:id/repository/files" do
-    let(:valid_params) {
+    let(:valid_params) do
       {
         file_path: file_path,
         branch_name: 'master',
         content: 'puts 8',
         commit_message: 'Changed file'
       }
-    }
+    end
 
     it "should update existing file in project repo" do
-      Gitlab::Satellite::EditFileAction.any_instance.stub(
-        commit!: true,
-      )
-
       put api("/projects/#{project.id}/repository/files", user), valid_params
       expect(response.status).to eq(200)
       expect(json_response['file_path']).to eq(file_path)
@@ -97,31 +88,18 @@ describe API::API, api: true  do
       put api("/projects/#{project.id}/repository/files", user)
       expect(response.status).to eq(400)
     end
-
-    it "should return a 400 if satellite fails to create file" do
-      Gitlab::Satellite::EditFileAction.any_instance.stub(
-        commit!: false,
-      )
-
-      put api("/projects/#{project.id}/repository/files", user), valid_params
-      expect(response.status).to eq(400)
-    end
   end
 
   describe "DELETE /projects/:id/repository/files" do
-    let(:valid_params) {
+    let(:valid_params) do
       {
         file_path: file_path,
         branch_name: 'master',
         commit_message: 'Changed file'
       }
-    }
+    end
 
     it "should delete existing file in project repo" do
-      Gitlab::Satellite::DeleteFileAction.any_instance.stub(
-        commit!: true,
-      )
-
       delete api("/projects/#{project.id}/repository/files", user), valid_params
       expect(response.status).to eq(200)
       expect(json_response['file_path']).to eq(file_path)
@@ -133,9 +111,7 @@ describe API::API, api: true  do
     end
 
     it "should return a 400 if satellite fails to create file" do
-      Gitlab::Satellite::DeleteFileAction.any_instance.stub(
-        commit!: false,
-      )
+      allow_any_instance_of(Repository).to receive(:remove_file).and_return(false)
 
       delete api("/projects/#{project.id}/repository/files", user), valid_params
       expect(response.status).to eq(400)

@@ -2,13 +2,33 @@ require 'spec_helper'
 
 describe ExtractsPath do
   include ExtractsPath
+  include RepoHelpers
+  include Rails.application.routes.url_helpers
 
   let(:project) { double('project') }
 
   before do
     @project = project
-    project.stub(repository: double(ref_names: ['master', 'foo/bar/baz', 'v1.0.0', 'v2.0.0']))
-    project.stub(path_with_namespace: 'gitlab/gitlab-ci')
+
+    repo = double(ref_names: ['master', 'foo/bar/baz', 'v1.0.0', 'v2.0.0',
+                              'release/app', 'release/app/v1.0.0'])
+    allow(project).to receive(:repository).and_return(repo)
+    allow(project).to receive(:path_with_namespace).
+      and_return('gitlab/gitlab-ci')
+  end
+
+  describe '#assign_ref' do
+    let(:ref) { sample_commit[:id] }
+    let(:params) { { path: sample_commit[:line_code_path], ref: ref } }
+
+    before do
+      @project = create(:project)
+    end
+
+    it "log tree path should have no escape sequences" do
+      assign_ref_vars
+      expect(@logs_path).to eq("/#{@project.path_with_namespace}/refs/#{ref}/logs_tree/files/ruby/popen.rb")
+    end
   end
 
   describe '#extract_ref' do
@@ -35,11 +55,17 @@ describe ExtractsPath do
       it "falls back to a primitive split for an invalid ref" do
         expect(extract_ref('stable')).to eq(['stable', ''])
       end
+
+      it "extracts the longest matching ref" do
+        expect(extract_ref('release/app/v1.0.0/README.md')).to eq(
+          ['release/app/v1.0.0', 'README.md'])
+      end
     end
 
     context "with a path" do
       it "extracts a valid branch" do
-        expect(extract_ref('foo/bar/baz/CHANGELOG')).to eq(['foo/bar/baz', 'CHANGELOG'])
+        expect(extract_ref('foo/bar/baz/CHANGELOG')).to eq(
+          ['foo/bar/baz', 'CHANGELOG'])
       end
 
       it "extracts a valid tag" do

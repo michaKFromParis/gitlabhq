@@ -11,7 +11,7 @@ describe Projects::UpdateService do
 
     context 'should be private when updated to private' do
       before do
-       @created_private = @project.private?
+        @created_private = @project.private?
 
         @opts.merge!(visibility_level: Gitlab::VisibilityLevel::PRIVATE)
         update_project(@project, @user, @opts)
@@ -47,9 +47,7 @@ describe Projects::UpdateService do
 
     context 'respect configured visibility restrictions setting' do
       before(:each) do
-        @restrictions = double("restrictions")
-        allow(@restrictions).to receive(:restricted_visibility_levels) { [ "public" ] }
-        Settings.stub_chain(:gitlab).and_return(@restrictions)
+        stub_application_setting(restricted_visibility_levels: [Gitlab::VisibilityLevel::PUBLIC])
       end
 
       context 'should be private when updated to private' do

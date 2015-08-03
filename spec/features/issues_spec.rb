@@ -21,7 +21,7 @@ describe 'Issues', feature: true do
     end
 
     before do
-      visit project_issues_path(project)
+      visit edit_namespace_project_issue_path(project.namespace, project, issue)
       click_link "Edit"
     end
 
@@ -36,9 +36,7 @@ describe 'Issues', feature: true do
       end
 
       it 'does not change issue count' do
-        expect {
-          click_button 'Save changes'
-        }.to_not change { Issue.count }
+        expect { click_button 'Save changes' }.to_not change { Issue.count }
       end
 
       it 'should update issue fields' do
@@ -61,7 +59,7 @@ describe 'Issues', feature: true do
     end
 
     it 'allows user to select unasigned', js: true do
-      visit edit_project_issue_path(project, issue)
+      visit edit_namespace_project_issue_path(project.namespace, project, issue)
 
       expect(page).to have_content "Assign to #{@user.name}"
 
@@ -94,24 +92,8 @@ describe 'Issues', feature: true do
 
     let(:issue) { @issue }
 
-    it 'should allow filtering by issues with no specified milestone' do
-      visit project_issues_path(project, milestone_id: '0')
-
-      expect(page).not_to have_content 'foobar'
-      expect(page).to have_content 'barbaz'
-      expect(page).to have_content 'gitlab'
-    end
-
-    it 'should allow filtering by a specified milestone' do
-      visit project_issues_path(project, milestone_id: issue.milestone.id)
-
-      expect(page).to have_content 'foobar'
-      expect(page).not_to have_content 'barbaz'
-      expect(page).not_to have_content 'gitlab'
-    end
-
     it 'should allow filtering by issues with no specified assignee' do
-      visit project_issues_path(project, assignee_id: '0')
+      visit namespace_project_issues_path(project.namespace, project, assignee_id: IssuableFinder::NONE)
 
       expect(page).to have_content 'foobar'
       expect(page).not_to have_content 'barbaz'
@@ -119,7 +101,7 @@ describe 'Issues', feature: true do
     end
 
     it 'should allow filtering by a specified assignee' do
-      visit project_issues_path(project, assignee_id: @user.id)
+      visit namespace_project_issues_path(project.namespace, project, assignee_id: @user.id)
 
       expect(page).not_to have_content 'foobar'
       expect(page).to have_content 'barbaz'
@@ -140,14 +122,14 @@ describe 'Issues', feature: true do
     let(:later_due_milestone) { create(:milestone, due_date: '2013-12-12') }
 
     it 'sorts by newest' do
-      visit project_issues_path(project, sort: sort_value_recently_created)
+      visit namespace_project_issues_path(project.namespace, project, sort: sort_value_recently_created)
 
       expect(first_issue).to include('foo')
       expect(last_issue).to include('baz')
     end
 
     it 'sorts by oldest' do
-      visit project_issues_path(project, sort: sort_value_oldest_created)
+      visit namespace_project_issues_path(project.namespace, project, sort: sort_value_oldest_created)
 
       expect(first_issue).to include('baz')
       expect(last_issue).to include('foo')
@@ -156,7 +138,7 @@ describe 'Issues', feature: true do
     it 'sorts by most recently updated' do
       baz.updated_at = Time.now + 100
       baz.save
-      visit project_issues_path(project, sort: sort_value_recently_updated)
+      visit namespace_project_issues_path(project.namespace, project, sort: sort_value_recently_updated)
 
       expect(first_issue).to include('baz')
     end
@@ -164,7 +146,7 @@ describe 'Issues', feature: true do
     it 'sorts by least recently updated' do
       baz.updated_at = Time.now - 100
       baz.save
-      visit project_issues_path(project, sort: sort_value_oldest_updated)
+      visit namespace_project_issues_path(project.namespace, project, sort: sort_value_oldest_updated)
 
       expect(first_issue).to include('baz')
     end
@@ -178,13 +160,13 @@ describe 'Issues', feature: true do
       end
 
       it 'sorts by recently due milestone' do
-        visit project_issues_path(project, sort: sort_value_milestone_soon)
+        visit namespace_project_issues_path(project.namespace, project, sort: sort_value_milestone_soon)
 
         expect(first_issue).to include('foo')
       end
 
       it 'sorts by least recently due milestone' do
-        visit project_issues_path(project, sort: sort_value_milestone_later)
+        visit namespace_project_issues_path(project.namespace, project, sort: sort_value_milestone_later)
 
         expect(first_issue).to include('bar')
       end
@@ -201,9 +183,9 @@ describe 'Issues', feature: true do
       end
 
       it 'sorts with a filter applied' do
-        visit project_issues_path(project,
-                                  sort: sort_value_oldest_created,
-                                  assignee_id: user2.id)
+        visit namespace_project_issues_path(project.namespace, project,
+                                            sort: sort_value_oldest_created,
+                                            assignee_id: user2.id)
 
         expect(first_issue).to include('bar')
         expect(last_issue).to include('foo')
@@ -218,9 +200,9 @@ describe 'Issues', feature: true do
     context 'by autorized user' do
 
       it 'with dropdown menu' do
-        visit project_issue_path(project, issue)
+        visit namespace_project_issue_path(project.namespace, project, issue)
 
-        find('.edit-issue.inline-update #issue_assignee_id').
+        find('.context #issue_assignee_id').
           set project.team.members.first.id
         click_button 'Update Issue'
 
@@ -244,7 +226,7 @@ describe 'Issues', feature: true do
         logout
         login_with guest
 
-        visit project_issue_path(project, issue)
+        visit namespace_project_issue_path(project.namespace, project, issue)
         expect(page).to have_content issue.assignee.name
       end
     end
@@ -257,9 +239,9 @@ describe 'Issues', feature: true do
     context 'by authorized user' do
 
       it 'with dropdown menu' do
-        visit project_issue_path(project, issue)
+        visit namespace_project_issue_path(project.namespace, project, issue)
 
-        find('.edit-issue.inline-update').
+        find('.context').
           select(milestone.title, from: 'issue_milestone_id')
         click_button 'Update Issue'
 
@@ -282,7 +264,7 @@ describe 'Issues', feature: true do
         logout
         login_with guest
 
-        visit project_issue_path(project, issue)
+        visit namespace_project_issue_path(project.namespace, project, issue)
         expect(page).to have_content milestone.title
       end
     end
@@ -296,7 +278,7 @@ describe 'Issues', feature: true do
       end
 
       it 'allows user to remove assignee', js: true do
-        visit project_issue_path(project, issue)
+        visit namespace_project_issue_path(project.namespace, project, issue)
         expect(page).to have_content "Assignee: #{user2.name}"
 
         first('#s2id_issue_assignee_id').click
@@ -311,10 +293,10 @@ describe 'Issues', feature: true do
   end
 
   def first_issue
-    all('ul.issues-list li').first.text
+    page.all('ul.issues-list li').first.text
   end
 
   def last_issue
-    all('ul.issues-list li').last.text
+    page.all('ul.issues-list li').last.text
   end
 end

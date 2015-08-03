@@ -6,15 +6,14 @@ describe API::API, api: true  do
   let(:user2) { create(:user) }
   let(:user3) { create(:user) }
   let(:admin) { create(:admin) }
-  let(:project)       {
-    create(:project,        creator_id:   user.id,
-                            namespace:    user.namespace)
-  }
-  let(:project_user2) {
-    create(:project_member, user:         user2,
-                            project:      project,
-                            access_level: ProjectMember::GUEST)
-  }
+
+  let(:project) do
+    create(:project, creator_id: user.id, namespace: user.namespace)
+  end
+
+  let(:project_user2) do
+    create(:project_member, user: user2, project: project, access_level: ProjectMember::GUEST)
+  end
 
   describe 'POST /projects/fork/:id' do
     before { project_user2 }
@@ -50,7 +49,6 @@ describe API::API, api: true  do
       it 'should fail if forked project exists in the user namespace' do
         post api("/projects/fork/#{project.id}", user)
         expect(response.status).to eq(409)
-        expect(json_response['message']['base']).to eq(['Invalid fork destination'])
         expect(json_response['message']['name']).to eq(['has already been taken'])
         expect(json_response['message']['path']).to eq(['has already been taken'])
       end

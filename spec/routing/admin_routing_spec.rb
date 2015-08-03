@@ -71,7 +71,7 @@ describe Admin::ProjectsController, "routing" do
   end
 
   it "to #show" do
-    expect(get("/admin/projects/gitlab")).to route_to('admin/projects#show', id: 'gitlab')
+    expect(get("/admin/projects/gitlab")).to route_to('admin/projects#show', namespace_id: 'gitlab')
   end
 end
 
@@ -118,4 +118,3 @@ describe Admin::DashboardController, "routing" do
     expect(get("/admin")).to route_to('admin/dashboard#index')
   end
 end
-

@@ -57,6 +57,7 @@ If you have enough RAM memory and a recent CPU the speed of GitLab is mainly lim
 - 16 cores supports up to 10,000 users
 - 32 cores supports up to 20,000 users
 - 64 cores supports up to 40,000 users
+- More users? Run it on [multiple application servers](https://about.gitlab.com/high-availability/)
 
 ### Memory
 
@@ -64,26 +65,31 @@ You need at least 2GB of addressable memory (RAM + swap) to install and use GitL
 With less memory GitLab will give strange errors during the reconfigure run and 500 errors during usage.
 
 - 512MB RAM + 1.5GB of swap is the absolute minimum but we strongly **advise against** this amount of memory. See the unicorn worker section below for more advise.
-- 1GB RAM + 1GB swap supports up to 100 users
-- **2GB RAM** is the **recommended** memory size and supports up to 500 users
-- 4GB RAM supports up to 2,000 users
-- 8GB RAM supports up to 5,000 users
-- 16GB RAM supports up to 10,000 users
-- 32GB RAM supports up to 20,000 users
-- 64GB RAM supports up to 40,000 users
+- 1GB RAM + 1GB swap supports up to 100 users but it will be slow
+- **2GB RAM** is the **recommended** memory size and supports up to 100 users
+- 4GB RAM supports up to 1,000 users
+- 8GB RAM supports up to 2,000 users
+- 16GB RAM supports up to 4,000 users
+- 32GB RAM supports up to 8,000 users
+- 64GB RAM supports up to 16,000 users
+- 128GB RAM supports up to 32,000 users
+- More users? Run it on [multiple application servers](https://about.gitlab.com/high-availability/)
 
-Notice: The 25 workers of Sidekiq will show up as separate processes in your process overview (such as top or htop) but they share the same RAM allocation since Sidekiq is a multithreaded application.
+Notice: The 25 workers of Sidekiq will show up as separate processes in your process overview (such as top or htop) but they share the same RAM allocation since Sidekiq is a multithreaded application. Please see the section below about Unicorn workers for information about many you need of those.
 
 ## Unicorn Workers
 
-It's possible to increase the amount of unicorn workers and tis will usually help for to reduce the response time of the applications.
+It's possible to increase the amount of unicorn workers and this will usually help for to reduce the response time of the applications and increase the ability to handle parallel requests.
+
 For most instances we recommend using: CPU cores + 1 = unicorn workers.
 So for a machine with 2 cores, 3 unicorn workers is ideal.
 
-For all machines that have 1GB and up we recommend a minimum of two unicorn workers.
+For all machines that have 1GB and up we recommend a minimum of three unicorn workers.
 If you have a 512MB machine with a magnetic (non-SSD) swap drive we recommend to configure only one Unicorn worker to prevent excessive swapping.
 With one Unicorn worker only git over ssh access will work because the git over HTTP access requires two running workers (one worker to receive the user request and one worker for the authorization check).
 If you have a 512MB machine with a SSD drive you can use two Unicorn workers, this will allow HTTP access although it will be slow due to swapping.
+
+To change the Unicorn workers when you have the Omnibus package please see [the Unicorn settings in the Omnibus GitLab documentation](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/unicorn.md#unicorn-settings).
 
 ## Database
 
@@ -104,3 +110,7 @@ On a very active server (10,000 active users) the Sidekiq process can use 1GB+ o
 - Safari 7+ (known problem: required fields in html5 do not work)
 - Opera (Latest released version)
 - IE 10+
+
+### Common UI problems with IE
+
+If you experience UI issues with Internet Explorer, please make sure that you have the `Compatibility View` mode disabled.

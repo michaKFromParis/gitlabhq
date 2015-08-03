@@ -33,8 +33,6 @@ describe Namespace do
     it { is_expected.to respond_to(:to_param) }
   end
 
-  it { expect(Namespace.global_id).to eq('GLN') }
-
   describe :to_param do
     it { expect(namespace.to_param).to eq(namespace.path) }
   end
@@ -55,7 +53,7 @@ describe Namespace do
   describe :move_dir do
     before do
       @namespace = create :namespace
-      @namespace.stub(path_changed?: true)
+      allow(@namespace).to receive(:path_changed?).and_return(true)
     end
 
     it "should raise error when directory exists" do
@@ -64,8 +62,8 @@ describe Namespace do
 
     it "should move dir if path changed" do
       new_path = @namespace.path + "_new"
-      @namespace.stub(path_was: @namespace.path)
-      @namespace.stub(path: new_path)
+      allow(@namespace).to receive(:path_was).and_return(@namespace.path)
+      allow(@namespace).to receive(:path).and_return(new_path)
       expect(@namespace.move_dir).to be_truthy
     end
   end
@@ -73,6 +71,26 @@ describe Namespace do
   describe :rm_dir do
     it "should remove dir" do
       expect(namespace.rm_dir).to be_truthy
+    end
+  end
+
+  describe :find_by_path_or_name do
+    before do
+      @namespace = create(:namespace, name: 'WoW', path: 'woW')
+    end
+
+    it { expect(Namespace.find_by_path_or_name('wow')).to eq(@namespace) }
+    it { expect(Namespace.find_by_path_or_name('WOW')).to eq(@namespace) }
+    it { expect(Namespace.find_by_path_or_name('unknown')).to eq(nil) }
+  end
+
+  describe ".clean_path" do
+
+    let!(:user)       { create(:user, username: "johngitlab-etc") }
+    let!(:namespace)  { create(:namespace, path: "JohnGitLab-etc1") }
+
+    it "cleans the path and makes sure it's available" do
+      expect(Namespace.clean_path("-john+gitlab-ETC%.git@gmail.com")).to eq("johngitlab-ETC2")
     end
   end
 end

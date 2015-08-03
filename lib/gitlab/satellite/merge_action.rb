@@ -33,7 +33,7 @@ module Gitlab
             merge_repo.git.push(default_options, :origin, merge_request.target_branch)
 
             # remove source branch
-            if merge_request.should_remove_source_branch && !project.root_ref?(merge_request.source_branch) && !merge_request.for_fork?
+            if merge_request.remove_source_branch?
               # will raise CommandFailed when push fails
               merge_repo.git.push(default_options, :origin, ":#{merge_request.source_branch}")
             end
@@ -97,7 +97,7 @@ module Gitlab
         in_locked_and_timed_satellite do |merge_repo|
           prepare_satellite!(merge_repo)
           update_satellite_source_and_target!(merge_repo)
-          if (merge_request.for_fork?)
+          if merge_request.for_fork?
             repository = Gitlab::Git::Repository.new(merge_repo.path)
             commits = Gitlab::Git::Commit.between(
               repository,

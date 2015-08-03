@@ -1,17 +1,71 @@
 class UploadsController < ApplicationController
-  def show
-    model = params[:model].camelize.constantize.find(params[:id])
-    uploader = model.send(params[:mounted_as])
+  skip_before_action :authenticate_user!
+  before_action :find_model, :authorize_access!
 
-    if uploader.file_storage?
-      if !model.respond_to?(:project) || can?(current_user, :read_project, model.project)
-        disposition = uploader.image? ? 'inline' : 'attachment'
-        send_file uploader.file.path, disposition: disposition
+  def show
+    uploader = @model.send(upload_mount)
+
+    unless uploader.file_storage?
+      return redirect_to uploader.url
+    end
+
+    unless uploader.file && uploader.file.exists?
+      return not_found!
+    end
+
+    disposition = uploader.image? ? 'inline' : 'attachment'
+    send_file uploader.file.path, disposition: disposition
+  end
+
+  private
+
+  def find_model
+    unless upload_model && upload_mount
+      return not_found!
+    end
+
+    @model = upload_model.find(params[:id])
+  end
+
+  def authorize_access!
+    authorized =
+      case @model
+      when Project
+        can?(current_user, :read_project, @model)
+      when Group
+        can?(current_user, :read_group, @model)
+      when Note
+        can?(current_user, :read_project, @model.project)
       else
-        not_found!
+        # No authentication required for user avatars.
+        true
       end
+
+    return if authorized
+
+    if current_user
+      not_found!
     else
-      redirect_to uploader.url
+      authenticate_user!
+    end
+  end
+
+  def upload_model
+    upload_models = {
+      "user"    => User,
+      "project" => Project,
+      "note"    => Note,
+      "group"   => Group
+    }
+
+    upload_models[params[:model]]
+  end
+
+  def upload_mount
+    upload_mounts = %w(avatar attachment file)
+
+    if upload_mounts.include?(params[:mounted_as])
+      params[:mounted_as]
     end
   end
 end

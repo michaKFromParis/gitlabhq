@@ -1,8 +1,17 @@
-# ![logo](https://about.gitlab.com/images/gitlab_logo.png) GitLab
+# GitLab
+
+[![build status](https://ci.gitlab.com/projects/1/status.png?ref=master)](https://ci.gitlab.com/projects/1?ref=master)
+[![Build Status](https://semaphoreapp.com/api/v1/projects/2f1a5809-418b-4cc2-a1f4-819607579fe7/243338/badge.png)](https://semaphoreapp.com/gitlabhq/gitlabhq)
+[![Code Climate](https://codeclimate.com/github/gitlabhq/gitlabhq.svg)](https://codeclimate.com/github/gitlabhq/gitlabhq)
+[![Coverage Status](https://coveralls.io/repos/gitlabhq/gitlabhq/badge.png?branch=master)](https://coveralls.io/r/gitlabhq/gitlabhq?branch=master)
+
+## Canonical source
+
+The source of GitLab Community Edition is [hosted on GitLab.com](https://gitlab.com/gitlab-org/gitlab-ce/) and there are mirrors to make [contributing](CONTRIBUTING.md) as easy as possible.
 
 ## Open source software to collaborate on code
 
-![Animated screenshots](https://about.gitlab.com/images/animated/compiled.gif)
+To see how GitLab looks please see the [features page on our website](https://about.gitlab.com/features/).
 
 - Manage Git repositories with fine grained access controls that keep your code secure
 - Perform code reviews and enhance collaboration with merge requests
@@ -17,23 +26,7 @@ There are two editions of GitLab.
 *GitLab [Community Edition](https://about.gitlab.com/features/) (CE)* is available without any costs under an MIT license.
 
 *GitLab Enterprise Edition (EE)* includes [extra features](https://about.gitlab.com/features/#compare) that are most useful for organizations with more than 100 users.
-To get access to the EE and support please [become a subscriber](https://about.gitlab.com/pricing/).
-
-## Canonical source
-
-The source of GitLab Community Edition is [hosted on GitLab.com](https://gitlab.com/gitlab-org/gitlab-ce/) and there are mirrors to make [contributing](CONTRIBUTING.md) as easy as possible.
-
-## Code status
-
-- [![build status](https://ci.gitlab.org/projects/1/status.png?ref=master)](https://ci.gitlab.org/projects/1?ref=master) on ci.gitlab.org (master branch)
-
-- [![Build Status](https://semaphoreapp.com/api/v1/projects/2f1a5809-418b-4cc2-a1f4-819607579fe7/243338/badge.png)](https://semaphoreapp.com/gitlabhq/gitlabhq)
-
-- [![Code Climate](https://codeclimate.com/github/gitlabhq/gitlabhq.svg)](https://codeclimate.com/github/gitlabhq/gitlabhq)
-
-- [![Coverage Status](https://coveralls.io/repos/gitlabhq/gitlabhq/badge.png?branch=master)](https://coveralls.io/r/gitlabhq/gitlabhq?branch=master)
-
-- [![PullReview stats](https://www.pullreview.com/gitlab/gitlab-org/gitlab-ce/badges/master.svg?)](https://www.pullreview.com/gitlab.gitlab.com/gitlab-org/gitlab-ce/reviews/master)
+To use EE and get official support please [become a subscriber](https://about.gitlab.com/pricing/).
 
 ## Website
 
@@ -76,7 +69,7 @@ Since 2011 a minor or major version of GitLab is released on the 22nd of every m
 
 ## Upgrading
 
-For updating the Omnibus installation please see the [update documentation](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/update.md). For installations from source there is an [upgrader script](doc/update/upgrader.md) and there are [upgrade guides](doc/update) detailing all necessary commands to migrate to the next version.
+For upgrading information please see our [update page](https://about.gitlab.com/update/).
 
 ## Install a development environment
 

@@ -11,7 +11,9 @@ module Gitlab
 
       def execute
         #Issues && Comments
-        client.list_issues(project.import_source, state: :all).each do |issue|
+        client.list_issues(project.import_source, state: :all,
+                                                  sort: :created,
+                                                  direction: :asc).each do |issue|
           if issue.pull_request.nil?
 
             body = @formatter.author_line(issue.user.login, issue.body)
@@ -20,7 +22,7 @@ module Gitlab
               body += @formatter.comments_header
 
               client.issue_comments(project.import_source, issue.number).each do |c|
-                body += @formatter.comment_to_md(c.user.login, c.created_at, c.body)
+                body += @formatter.comment(c.user.login, c.created_at, c.body)
               end
             end
 

@@ -43,7 +43,7 @@ describe WikiPage do
 
   describe "validations" do
     before do
-      subject.attributes = {title: 'title', content: 'content'}
+      subject.attributes = { title: 'title', content: 'content' }
     end
 
     it "validates presence of title" do
@@ -58,7 +58,7 @@ describe WikiPage do
   end
 
   before do
-    @wiki_attr = {title: "Index", content: "Home Page", format: "markdown"}
+    @wiki_attr = { title: "Index", content: "Home Page", format: "markdown" }
   end
 
   describe "#create" do
@@ -74,6 +74,47 @@ describe WikiPage do
 
       it "returns true" do
         expect(subject.create(@wiki_attr)).to eq(true)
+      end
+    end
+  end
+
+  describe "dot in the title" do
+    let(:title) { 'Index v1.2.3' }
+
+    before do
+      @wiki_attr = { title: title, content: "Home Page", format: "markdown" }
+    end
+
+    describe "#create" do
+      after do
+        destroy_page(title)
+      end
+
+      context "with valid attributes" do
+        it "saves the wiki page" do
+          subject.create(@wiki_attr)
+          expect(wiki.find_page(title)).not_to be_nil
+        end
+
+        it "returns true" do
+          expect(subject.create(@wiki_attr)).to eq(true)
+        end
+      end
+    end
+
+    describe "#update" do
+      before do
+        create_page(title, "content")
+        @page = wiki.find_page(title)
+      end
+
+      it "updates the content of the page" do
+        @page.update("new content")
+        @page = wiki.find_page(title)
+      end
+
+      it "returns true" do
+        expect(@page.update("more content")).to be_truthy
       end
     end
   end
@@ -155,7 +196,7 @@ describe WikiPage do
   end
 
   def commit_details
-    commit = {name: user.name, email: user.email, message: "test commit"}
+    commit = { name: user.name, email: user.email, message: "test commit" }
   end
 
   def create_page(name, content)
