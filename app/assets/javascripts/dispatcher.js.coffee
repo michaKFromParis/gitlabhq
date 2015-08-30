@@ -128,10 +128,7 @@ class Dispatcher
             shortcut_handler = new ShortcutsNavigation()
             new ZenMode()
             new DropzoneInput($('.wiki-form'))
-          when 'snippets'
-            shortcut_handler = new ShortcutsNavigation()
-            new ZenMode() if path[2] == 'show'
-          when 'labels', 'graphs'
+          when 'snippets', 'labels', 'graphs'
             shortcut_handler = new ShortcutsNavigation()
           when 'project_members', 'deploy_keys', 'hooks', 'services', 'protected_branches'
             shortcut_handler = new ShortcutsNavigation()

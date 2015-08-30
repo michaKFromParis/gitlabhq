@@ -39,7 +39,7 @@ describe ProjectsFinder do
   end
 
   context 'authenticated, group member' do
-    before { group.add_developer(user) }
+    before { group.add_user(user, Gitlab::Access::DEVELOPER) }
 
     subject { ProjectsFinder.new.execute(user, group: group) }
 

@@ -90,7 +90,12 @@
           border-right: none;
         }
         background: #fff;
-        padding: 8px;
+        padding: 5px;
+      }
+      .author,
+      .blame_commit {
+        background: $background-color;
+        vertical-align: top;
       }
       .lines {
         pre {

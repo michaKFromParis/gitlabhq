@@ -9,63 +9,49 @@ module Gitlab
       end
 
       def uid
-        @uid ||= Gitlab::Utils.force_utf8(auth_hash.uid.to_s)
+        Gitlab::Utils.force_utf8(auth_hash.uid.to_s)
       end
 
       def provider
-        @provider ||= Gitlab::Utils.force_utf8(auth_hash.provider.to_s)
+        Gitlab::Utils.force_utf8(auth_hash.provider.to_s)
       end
 
       def info
         auth_hash.info
       end
 
-      def get_info(key)
-        value = info.try(key)
-        Gitlab::Utils.force_utf8(value) if value
-        value
+      def name
+        Gitlab::Utils.force_utf8((info.try(:name) || full_name).to_s)
       end
 
-      def name
-        @name ||= get_info(:name) || "#{get_info(:first_name)} #{get_info(:last_name)}"
+      def full_name
+        Gitlab::Utils.force_utf8("#{info.first_name} #{info.last_name}")
       end
 
       def username
-        @username ||= username_and_email[:username].to_s
+        Gitlab::Utils.force_utf8(
+          (info.try(:nickname) || generate_username).to_s
+        )
       end
 
       def email
-        @email ||= username_and_email[:email].to_s
+        Gitlab::Utils.force_utf8(
+          (info.try(:email) || generate_temporarily_email).downcase
+        )
       end
 
       def password
-        @password ||= Gitlab::Utils.force_utf8(Devise.friendly_token[0, 8].downcase)
-      end
-
-      private
-
-      def username_and_email
-        @username_and_email ||= begin
-          username  = get_info(:nickname) || get_info(:username)
-          email     = get_info(:email)
-
-          username ||= generate_username(email)             if email
-          email    ||= generate_temporarily_email(username) if username
-
-          {
-            username: username,
-            email:    email
-          }
-        end
+        devise_friendly_token = Devise.friendly_token[0, 8].downcase
+        @password ||= Gitlab::Utils.force_utf8(devise_friendly_token)
       end
 
       # Get the first part of the email address (before @)
       # In addtion in removes illegal characters
-      def generate_username(email)
+      def generate_username
         email.match(/^[^@]*/)[0].parameterize
       end
 
-      def generate_temporarily_email(username)
+      def generate_temporarily_email
         "temp-email-for-oauth-#{username}@gitlab.localhost"
       end
     end

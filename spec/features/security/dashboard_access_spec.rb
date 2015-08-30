@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe "Dashboard access", feature: true  do
-  include AccessMatchers
-
   describe "GET /dashboard" do
     subject { dashboard_path }
 
