@@ -1,7 +1,11 @@
 # GitLab
 
 [![build status](https://ci.gitlab.com/projects/1/status.png?ref=master)](https://ci.gitlab.com/projects/1?ref=master)
+<<<<<<< HEAD
 [![Build Status](https://semaphoreci.com/api/v1/projects/2f1a5809-418b-4cc2-a1f4-819607579fe7/400484/shields_badge.svg)](https://semaphoreci.com/gitlabhq/gitlabhq)
+=======
+[![Build Status](https://semaphoreapp.com/api/v1/projects/2f1a5809-418b-4cc2-a1f4-819607579fe7/243338/badge.png)](https://semaphoreapp.com/gitlabhq/gitlabhq)
+>>>>>>> master
 [![Code Climate](https://codeclimate.com/github/gitlabhq/gitlabhq.svg)](https://codeclimate.com/github/gitlabhq/gitlabhq)
 [![Coverage Status](https://coveralls.io/repos/gitlabhq/gitlabhq/badge.png?branch=master)](https://coveralls.io/r/gitlabhq/gitlabhq?branch=master)
 
@@ -22,12 +26,20 @@ To see how GitLab looks please see the [features page on our website](https://ab
 
 ## Editions
 
+<<<<<<< HEAD
 There are two editions of GitLab:
 
 - GitLab Community Edition (CE) is available freely under the MIT Expat license.
 - GitLab Enterprise Edition (EE) includes [extra features](https://about.gitlab.com/features/#compare) that are more useful for organizations with more than 100 users. To use EE and get official support please [become a subscriber](https://about.gitlab.com/pricing/).
 
 Included with the GitLab Omnibus Packages is [GitLab CI](https://about.gitlab.com/gitlab-ci/) that can easily build, test and deploy code.
+=======
+There are two editions of GitLab.
+*GitLab [Community Edition](https://about.gitlab.com/features/) (CE)* is available without any costs under an MIT license.
+
+*GitLab Enterprise Edition (EE)* includes [extra features](https://about.gitlab.com/features/#compare) that are most useful for organizations with more than 100 users.
+To use EE and get official support please [become a subscriber](https://about.gitlab.com/pricing/).
+>>>>>>> master
 
 ## Website
 
@@ -53,6 +65,7 @@ Just select your operating system, download the respective package (Debian or RP
 There are various other options to install GitLab, please refer to the [installation page on the GitLab website](https://about.gitlab.com/installation/) for more information.
 
 You can access a new installation with the login **`root`** and password **`5iveL!fe`**, after login you are required to set a unique password.
+<<<<<<< HEAD
 
 ## Install a development environment
 
@@ -75,6 +88,8 @@ GitLab is a Ruby on Rails application that runs on the following software:
 - MySQL or PostgreSQL
 
 For more information please see the [architecture documentation](http://doc.gitlab.com/ce/development/architecture.html).
+=======
+>>>>>>> master
 
 ## Third-party applications
 

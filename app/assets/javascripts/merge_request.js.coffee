@@ -23,6 +23,12 @@ class @MergeRequest
     if $("a.btn-close").length
       @initTaskList()
 
+    $('.issuable-affix').affix offset:
+      top: ->
+        @top = $('.merge-request-details').outerHeight(true) + 70
+      bottom: ->
+        @bottom = $('.footer').outerHeight(true)
+
   # Local jQuery finder
   $: (selector) ->
     this.$el.find(selector)

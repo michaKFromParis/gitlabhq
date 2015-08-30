@@ -34,6 +34,7 @@ describe Repository do
     end
   end
 
+<<<<<<< HEAD
   describe :merged_to_root_ref? do
     context 'merged branch' do
       subject { repository.merged_to_root_ref?('improve/awesome') }
@@ -54,6 +55,8 @@ describe Repository do
     end
   end
 
+=======
+>>>>>>> master
   describe "search_files" do
     let(:results) { repository.search_files('feature', 'master') }
     subject { results }

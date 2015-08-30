@@ -32,6 +32,7 @@ module Backup
       abort 'Backup failed' unless success
 
       $progress.print 'Compressing database ... '
+      FileUtils.rm_f db_file_name_gz
       success = system('gzip', db_file_name)
       report_success(success)
       abort 'Backup failed: compress error' unless success

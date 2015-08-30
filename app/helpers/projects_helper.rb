@@ -313,6 +313,7 @@ module ProjectsHelper
     else
       count
     end
+<<<<<<< HEAD
   end
 
   private
@@ -326,5 +327,7 @@ module ProjectsHelper
                     blob.name)
       )
     end
+=======
+>>>>>>> master
   end
 end

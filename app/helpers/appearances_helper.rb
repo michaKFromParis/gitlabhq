@@ -4,7 +4,7 @@ module AppearancesHelper
   end
 
   def brand_title
-    'GitLab Community Edition'
+    'Sparks Lab'
   end
 
   def brand_image
@@ -16,6 +16,6 @@ module AppearancesHelper
   end
 
   def brand_header_logo
-    image_tag 'logo.svg'
+    image_tag 'sparks.svg'
   end
 end

@@ -368,6 +368,7 @@ class Repository
     @root_ref ||= raw_repository.root_ref
   end
 
+<<<<<<< HEAD
   def merged_to_root_ref?(branch_name)
     branch_commit = commit(branch_name)
     root_ref_commit = commit(root_ref)
@@ -379,6 +380,8 @@ class Repository
     end
   end
 
+=======
+>>>>>>> master
   def search_files(query, ref)
     offset = 2
     args = %W(git grep -i -n --before-context #{offset} --after-context #{offset} #{query} #{ref || root_ref})

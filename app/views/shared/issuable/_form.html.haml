@@ -38,7 +38,11 @@
       .clearfix
       .error-alert
   %hr
+<<<<<<< HEAD
 - if can?(current_user, :"admin_#{issuable.to_ability_name}", issuable.project)
+=======
+- if can?(current_user, :"admin_#{issuable.to_ability_name}", @project)
+>>>>>>> master
   .form-group
     .issue-assignee
       = f.label :assignee_id, class: 'control-label' do
