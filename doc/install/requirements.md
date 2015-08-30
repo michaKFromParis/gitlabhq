@@ -32,7 +32,7 @@ Please consider using a virtual machine to run GitLab.
 
 ## Ruby versions
 
-GitLab requires Ruby (MRI) 2.0 or 2.1
+GitLab requires Ruby (MRI) 2.1
 You will have to use the standard MRI implementation of Ruby.
 We love [JRuby](http://jruby.org/) and [Rubinius](http://rubini.us/) but GitLab needs several Gems that have native extensions.
 
@@ -93,7 +93,7 @@ To change the Unicorn workers when you have the Omnibus package please see [the 
 
 ## Database
 
-If you want to run the database separately, the **recommended** database size is **1 MB per user**.
+If you want to run the database separately expect a size of about 1 MB per user.
 
 ## Redis and Sidekiq
 

@@ -3,13 +3,17 @@
     .event-item-timestamp
       #{time_ago_with_tooltip(event.created_at)}
 
-    - if event.created_project?
-      = cache [event, current_user] do
-        = image_tag avatar_icon(event.author_email, 24), class: "avatar s24", alt:''
+    = cache [event, "v1"] do
+      = image_tag avatar_icon(event.author_email, 24), class: "avatar s24", alt:''
+      - if event.created_project?
         = render "events/event/created_project", event: event
+<<<<<<< HEAD
+      - elsif event.push?
+=======
     - else
       = image_tag avatar_icon(event.author_email, 24), class: "avatar s24", alt:''
       - if event.push?
+>>>>>>> master
         = render "events/event/push", event: event
       - elsif event.commented?
         = render "events/event/note", event: event

@@ -116,6 +116,12 @@ $ ->
   $('.remove-row').bind 'ajax:success', ->
     $(this).closest('li').fadeOut()
 
+  $('.js-remove-tr').bind 'ajax:before', ->
+    $(this).hide()
+
+  $('.js-remove-tr').bind 'ajax:success', ->
+    $(this).closest('tr').fadeOut()
+
   # Initialize select2 selects
   $('select.select2').select2(width: 'resolve', dropdownAutoWidth: true)
 
@@ -164,9 +170,10 @@ $ ->
   $('.account-box').hover -> $(@).toggleClass('hover')
 
   # Commit show suppressed diff
-  $(".diff-content").on "click", ".supp_diff_link", ->
-    $(@).next('table').show()
-    $(@).remove()
+  $(document).on 'click', '.diff-content .js-show-suppressed-diff', ->
+    $container = $(@).parent()
+    $container.next('table').show()
+    $container.remove()
 
   $('.navbar-toggle').on 'click', ->
     $('.header-content .title').toggle()

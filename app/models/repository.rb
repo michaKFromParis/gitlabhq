@@ -148,6 +148,10 @@ class Repository
     @lookup_cache ||= {}
   end
 
+  def expire_branch_names
+    cache.expire(:branch_names)
+  end
+
   def method_missing(m, *args, &block)
     if m == :lookup && !block_given?
       lookup_cache[m] ||= {}
@@ -364,6 +368,20 @@ class Repository
     @root_ref ||= raw_repository.root_ref
   end
 
+<<<<<<< HEAD
+  def merged_to_root_ref?(branch_name)
+    branch_commit = commit(branch_name)
+    root_ref_commit = commit(root_ref)
+
+    if branch_commit
+      rugged.merge_base(root_ref_commit.id, branch_commit.id) == branch_commit.id
+    else
+      nil
+    end
+  end
+
+=======
+>>>>>>> master
   def search_files(query, ref)
     offset = 2
     args = %W(git grep -i -n --before-context #{offset} --after-context #{offset} #{query} #{ref || root_ref})
@@ -375,8 +393,7 @@ class Repository
     filename = nil
     startline = 0
 
-    lines = result.lines
-    lines.each_with_index do |line, index|
+    result.each_line.each_with_index do |line, index|
       if line =~ /^.*:.*:\d+:/
         ref, filename, startline = line.split(':')
         startline = startline.to_i - index
@@ -384,11 +401,11 @@ class Repository
       end
     end
 
-    data = lines.map do |line|
-      line.sub(ref, '').sub(filename, '').sub(/^:-\d+-/, '').sub(/^::\d+:/, '')
-    end
+    data = ""
 
-    data = data.join("")
+    result.each_line do |line|
+      data << line.sub(ref, '').sub(filename, '').sub(/^:-\d+-/, '').sub(/^::\d+:/, '')
+    end
 
     OpenStruct.new(
       filename: filename,

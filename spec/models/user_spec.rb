@@ -57,6 +57,7 @@
 #  otp_backup_codes              :text
 #  public_email                  :string(255)      default(""), not null
 #  dashboard                     :integer          default(0)
+#  project_view                  :integer          default(0)
 #
 
 require 'spec_helper'
@@ -181,6 +182,19 @@ describe User do
     it { is_expected.to respond_to(:is_admin?) }
     it { is_expected.to respond_to(:name) }
     it { is_expected.to respond_to(:private_token) }
+  end
+
+  describe '#confirm' do
+    let(:user) { create(:user, confirmed_at: nil, unconfirmed_email: 'test@gitlab.com') }
+
+    it 'returns unconfirmed' do
+      expect(user.confirmed?).to be_falsey
+    end
+
+    it 'confirms a user' do
+      user.confirm!
+      expect(user.confirmed?).to be_truthy
+    end
   end
 
   describe '#to_reference' do
@@ -439,6 +453,18 @@ describe User do
       expect(User.by_login(username)).to eq user
       expect(User.by_login(nil)).to be_nil
       expect(User.by_login('')).to be_nil
+    end
+  end
+
+  describe '.find_by_username!' do
+    it 'raises RecordNotFound' do
+      expect { described_class.find_by_username!('JohnDoe') }.
+        to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'is case-insensitive' do
+      user = create(:user, username: 'JohnDoe')
+      expect(described_class.find_by_username!('JOHNDOE')).to eq user
     end
   end
 

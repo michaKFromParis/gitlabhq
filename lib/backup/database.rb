@@ -7,13 +7,20 @@ module Backup
     def initialize
       @config = YAML.load_file(File.join(Rails.root,'config','database.yml'))[Rails.env]
       @db_dir = File.join(Gitlab.config.backup.path, 'db')
-      FileUtils.mkdir_p(@db_dir) unless Dir.exists?(@db_dir)
     end
 
     def dump
+      FileUtils.rm_rf(@db_dir)
+      # Ensure the parent dir of @db_dir exists
+      FileUtils.mkdir_p(Gitlab.config.backup.path)
+      # Fail if somebody raced to create @db_dir before us
+      FileUtils.mkdir(@db_dir, mode: 0700)
+
       success = case config["adapter"]
       when /^mysql/ then
         $progress.print "Dumping MySQL database #{config['database']} ... "
+        # Workaround warnings from MySQL 5.6 about passwords on cmd line
+        ENV['MYSQL_PWD'] = config["password"].to_s if config["password"]
         system('mysqldump', *mysql_args, config['database'], out: db_file_name)
       when "postgresql" then
         $progress.print "Dumping PostgreSQL database #{config['database']} ... "
@@ -40,6 +47,8 @@ module Backup
       success = case config["adapter"]
       when /^mysql/ then
         $progress.print "Restoring MySQL database #{config['database']} ... "
+        # Workaround warnings from MySQL 5.6 about passwords on cmd line
+        ENV['MYSQL_PWD'] = config["password"].to_s if config["password"]
         system('mysql', *mysql_args, config['database'], in: db_file_name)
       when "postgresql" then
         $progress.print "Restoring PostgreSQL database #{config['database']} ... "
@@ -66,8 +75,7 @@ module Backup
         'port'      => '--port',
         'socket'    => '--socket',
         'username'  => '--user',
-        'encoding'  => '--default-character-set',
-        'password'  => '--password'
+        'encoding'  => '--default-character-set'
       }
       args.map { |opt, arg| "#{arg}=#{config[opt]}" if config[opt] }.compact
     end
