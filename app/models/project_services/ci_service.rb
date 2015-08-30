@@ -41,7 +41,7 @@ class CiService < Service
 
   # Return string with build status or :error symbol
   #
-  # Allowed states: 'success', 'failed', 'running', 'pending', 'skipped'
+  # Allowed states: 'success', 'failed', 'running', 'pending'
   #
   #
   # Ex.

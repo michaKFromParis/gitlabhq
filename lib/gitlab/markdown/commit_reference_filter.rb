@@ -47,11 +47,10 @@ module Gitlab
 
             title = escape_once(commit.link_title)
             klass = reference_class(:commit)
-            data  = data_attribute(project.id)
 
             project_ref += '@' if project_ref
 
-            %(<a href="#{url}" #{data}
+            %(<a href="#{url}"
                  title="#{title}"
                  class="#{klass}">#{project_ref}#{commit.short_id}</a>)
           else

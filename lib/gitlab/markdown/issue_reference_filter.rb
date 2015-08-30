@@ -49,9 +49,8 @@ module Gitlab
 
             title = escape_once("Issue: #{issue.title}")
             klass = reference_class(:issue)
-            data  = data_attribute(project.id)
 
-            %(<a href="#{url}" #{data}
+            %(<a href="#{url}"
                  title="#{title}"
                  class="#{klass}">#{match}</a>)
           else

@@ -485,8 +485,7 @@ namespace :gitlab do
 
         if project.empty_repo?
           puts "repository is empty".magenta
-        elsif File.directory?(project_hook_directory) && File.directory?(gitlab_shell_hooks_path) &&
-            (File.realpath(project_hook_directory) == File.realpath(gitlab_shell_hooks_path))
+        elsif File.realpath(project_hook_directory) == File.realpath(gitlab_shell_hooks_path)
           puts 'ok'.green
         else
           puts "wrong or missing hooks".red
@@ -749,13 +748,13 @@ namespace :gitlab do
   end
 
   def check_ruby_version
-    required_version = Gitlab::VersionInfo.new(2, 1, 0)
+    required_version = Gitlab::VersionInfo.new(2, 0, 0)
     current_version = Gitlab::VersionInfo.parse(run(%W(ruby --version)))
 
     print "Ruby version >= #{required_version} ? ... "
 
     if current_version.valid? && required_version <= current_version
-      puts "yes (#{current_version})".green
+        puts "yes (#{current_version})".green
     else
       puts "no".red
       try_fixing_it(
@@ -773,7 +772,7 @@ namespace :gitlab do
     print "Git version >= #{required_version} ? ... "
 
     if current_version.valid? && required_version <= current_version
-      puts "yes (#{current_version})".green
+        puts "yes (#{current_version})".green
     else
       puts "no".red
       try_fixing_it(
@@ -807,3 +806,4 @@ namespace :gitlab do
     end
   end
 end
+

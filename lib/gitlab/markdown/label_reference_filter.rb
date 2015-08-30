@@ -43,9 +43,8 @@ module Gitlab
 
             url = url_for_label(project, label)
             klass = reference_class(:label)
-            data = data_attribute(project.id)
 
-            %(<a href="#{url}" #{data}
+            %(<a href="#{url}"
                  class="#{klass}">#{render_colored_label(label)}</a>)
           else
             match

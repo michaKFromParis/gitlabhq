@@ -22,10 +22,10 @@ class Redcarpet::Render::GitlabHTML < Redcarpet::Render::HTML
     ERB::Util.html_escape_once(text)
   end
 
-  # Stolen from Rouge::Plugins::Redcarpet as this module is not required
-  # from Rouge's gem root.
+  # Stolen from Rugments::Plugins::Redcarpet as this module is not required
+  # from Rugments's gem root.
   def block_code(code, language)
-    lexer = Rouge::Lexer.find_fancy(language, code) || Rouge::Lexers::PlainText
+    lexer = Rugments::Lexer.find_fancy(language, code) || Rugments::Lexers::PlainText
 
     # XXX HACK: Redcarpet strips hard tabs out of code blocks,
     # so we assume you're not using leading spaces that aren't tabs,
@@ -34,13 +34,13 @@ class Redcarpet::Render::GitlabHTML < Redcarpet::Render::HTML
       code.gsub!(/^    /, "\t")
     end
 
-    formatter = Rouge::Formatters::HTMLGitlab.new(
+    formatter = Rugments::Formatters::HTML.new(
       cssclass: "code highlight #{@color_scheme} #{lexer.tag}"
     )
     formatter.format(lexer.lex(code))
   end
 
   def postprocess(full_document)
-    h.gfm(full_document, @options)
+    h.gfm_with_options(full_document, @options)
   end
 end

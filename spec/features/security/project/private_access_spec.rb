@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe "Private Project Access", feature: true  do
-  include AccessMatchers
-
   let(:project) { create(:project) }
 
   let(:master)   { create(:user) }

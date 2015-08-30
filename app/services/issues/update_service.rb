@@ -14,7 +14,7 @@ module Issues
       filter_params
       old_labels = issue.labels.to_a
 
-      if params.present? && issue.update_attributes(params.merge(updated_by: current_user))
+      if params.present? && issue.update_attributes(params)
         issue.reset_events_cache
 
         if issue.labels != old_labels

@@ -39,19 +39,15 @@ describe FlowdockService do
         token: 'verySecret'
       )
       @sample_data = Gitlab::PushDataBuilder.build_sample(project, user)
-      @api_url = 'https://api.flowdock.com/v1/messages'
+      @api_url = 'https://api.flowdock.com/v1/git/verySecret'
       WebMock.stub_request(:post, @api_url)
     end
 
     it "should call FlowDock API" do
       @flowdock_service.execute(@sample_data)
-      @sample_data[:commits].each do |commit|
-        # One request to Flowdock per new commit
-        next if commit[:id] == @sample_data[:before]
-        expect(WebMock).to have_requested(:post, @api_url).with(
-          body: /#{commit[:id]}.*#{project.path}/
-        ).once
-      end
+      expect(WebMock).to have_requested(:post, @api_url).with(
+        body: /#{@sample_data[:before]}.*#{@sample_data[:after]}.*#{project.path}/
+      ).once
     end
   end
 end

@@ -21,7 +21,7 @@ module ProjectsHelper
   end
 
   def link_to_member(project, author, opts = {})
-    default_opts = { avatar: true, name: true, size: 16, author_class: 'author' }
+    default_opts = { avatar: true, name: true, size: 16 }
     opts = default_opts.merge(opts)
 
     return "(deleted)" unless author
@@ -32,7 +32,7 @@ module ProjectsHelper
     author_html << image_tag(avatar_icon(author.try(:email), opts[:size]), width: opts[:size], class: "avatar avatar-inline #{"s#{opts[:size]}" if opts[:size]}", alt:'') if opts[:avatar]
 
     # Build name span tag
-    author_html << content_tag(:span, sanitize(author.name), class: opts[:author_class]) if opts[:name]
+    author_html << content_tag(:span, sanitize(author.name), class: 'author') if opts[:name]
 
     author_html = author_html.html_safe
 
@@ -131,12 +131,8 @@ module ProjectsHelper
       nav_tabs << :snippets
     end
 
-    if can?(current_user, :read_label, project)
-      nav_tabs << :labels
-    end
-
     if can?(current_user, :read_milestone, project)
-      nav_tabs << :milestones
+      nav_tabs << [:milestones, :labels]
     end
 
     nav_tabs.flatten
@@ -184,43 +180,7 @@ module ProjectsHelper
     end
   end
 
-  def add_contribution_guide_path(project)
-    if project && !project.repository.contribution_guide
-      namespace_project_new_blob_path(
-        project.namespace,
-        project,
-        project.default_branch,
-        file_name:      "CONTRIBUTING.md",
-        commit_message: "Add contribution guide"
-      )
-    end
-  end
-
-  def add_changelog_path(project)
-    if project && !project.repository.changelog
-      namespace_project_new_blob_path(
-        project.namespace,
-        project,
-        project.default_branch,
-        file_name:      "CHANGELOG",
-        commit_message: "Add changelog"
-      )
-    end
-  end
-
-  def add_license_path(project)
-    if project && !project.repository.license
-      namespace_project_new_blob_path(
-        project.namespace,
-        project,
-        project.default_branch,
-        file_name:      "LICENSE",
-        commit_message: "Add license"
-      )
-    end
-  end
-
-  def contribution_guide_path(project)
+  def contribution_guide_url(project)
     if project && contribution_guide = project.repository.contribution_guide
       namespace_project_blob_path(
         project.namespace,
@@ -231,20 +191,37 @@ module ProjectsHelper
     end
   end
 
-  def readme_path(project)
-    filename_path(project, :readme)
+  def changelog_url(project)
+    if project && changelog = project.repository.changelog
+      namespace_project_blob_path(
+        project.namespace,
+        project,
+        tree_join(project.default_branch,
+                  changelog.name)
+      )
+    end
   end
 
-  def changelog_path(project)
-    filename_path(project, :changelog)
+  def license_url(project)
+    if project && license = project.repository.license
+      namespace_project_blob_path(
+        project.namespace,
+        project,
+        tree_join(project.default_branch,
+                  license.name)
+      )
+    end
   end
 
-  def license_path(project)
-    filename_path(project, :license)
-  end
-
-  def version_path(project)
-    filename_path(project, :version)
+  def version_url(project)
+    if project && version = project.repository.version
+      namespace_project_blob_path(
+        project.namespace,
+        project,
+        tree_join(project.default_branch,
+                  version.name)
+      )
+    end
   end
 
   def hidden_pass_url(original_url)
@@ -313,21 +290,5 @@ module ProjectsHelper
     else
       count
     end
-<<<<<<< HEAD
-  end
-
-  private
-
-  def filename_path(project, filename)
-    if project && blob = project.repository.send(filename)
-      namespace_project_blob_path(
-          project.namespace,
-          project,
-          tree_join(project.default_branch,
-                    blob.name)
-      )
-    end
-=======
->>>>>>> master
   end
 end

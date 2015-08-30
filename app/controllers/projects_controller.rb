@@ -24,7 +24,7 @@ class ProjectsController < ApplicationController
     if @project.saved?
       redirect_to(
         project_path(@project),
-        notice: "Project '#{@project.name}' was successfully created."
+        notice: 'Project was successfully created.'
       )
     else
       render 'new'
@@ -36,11 +36,11 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       if status
-        flash[:notice] = "Project '#{@project.name}' was successfully updated."
+        flash[:notice] = 'Project was successfully updated.'
         format.html do
           redirect_to(
             edit_project_path(@project),
-            notice: "Project '#{@project.name}' was successfully updated."
+            notice: 'Project was successfully updated.'
           )
         end
         format.js
@@ -100,7 +100,7 @@ class ProjectsController < ApplicationController
     return access_denied! unless can?(current_user, :remove_project, @project)
 
     ::Projects::DestroyService.new(@project, current_user, {}).execute
-    flash[:alert] = "Project '#{@project.name}' was deleted."
+    flash[:alert] = 'Project deleted.'
 
     if request.referer.include?('/admin')
       redirect_to admin_namespaces_projects_path

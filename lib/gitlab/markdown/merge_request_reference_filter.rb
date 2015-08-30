@@ -47,11 +47,10 @@ module Gitlab
 
             title = escape_once("Merge Request: #{merge_request.title}")
             klass = reference_class(:merge_request)
-            data  = data_attribute(project.id)
 
             url = url_for_merge_request(merge_request, project)
 
-            %(<a href="#{url}" #{data}
+            %(<a href="#{url}"
                  title="#{title}"
                  class="#{klass}">#{match}</a>)
           else

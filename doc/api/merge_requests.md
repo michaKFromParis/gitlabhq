@@ -49,8 +49,7 @@ Parameters:
       "state": "active",
       "created_at": "2012-04-29T08:46:00Z"
     },
-    "description":"fixed login page css paddings",
-    "work_in_progress": false
+    "description":"fixed login page css paddings"
   }
 ]
 ```
@@ -95,8 +94,7 @@ Parameters:
     "state": "active",
     "created_at": "2012-04-29T08:46:00Z"
   },
-  "description":"fixed login page css paddings",
-  "work_in_progress": false
+  "description":"fixed login page css paddings"
 }
 ```
 
@@ -120,7 +118,6 @@ Parameters:
   "project_id": 4,
   "title": "Blanditiis beatae suscipit hic assumenda et molestias nisi asperiores repellat et.",
   "description": "Qui voluptatibus placeat ipsa alias quasi. Deleniti rem ut sint. Optio velit qui distinctio.",
-  "work_in_progress": false,
   "state": "reopened",
   "created_at": "2015-02-02T19:49:39.159Z",
   "updated_at": "2015-02-02T20:08:49.959Z",
@@ -339,6 +336,14 @@ Parameters:
 
 ```json
 {
+  "author": {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@example.com",
+    "name": "Administrator",
+    "blocked": false,
+    "created_at": "2012-04-29T08:46:00Z"
+  },
   "note": "text1"
 }
 ```

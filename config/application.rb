@@ -96,7 +96,6 @@ module Gitlab
     end
 
     redis_config_hash[:namespace] = 'cache:gitlab'
-    redis_config_hash[:expires_in] = 2.weeks # Cache should not grow forever
     config.cache_store = :redis_store, redis_config_hash
 
     # This is needed for gitlab-shell

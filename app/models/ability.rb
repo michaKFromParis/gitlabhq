@@ -31,11 +31,10 @@ class Ability
                 end
 
       if project && project.public?
-        rules = [
+        [
           :read_project,
           :read_wiki,
           :read_issue,
-          :read_label,
           :read_milestone,
           :read_project_snippet,
           :read_project_member,
@@ -43,8 +42,6 @@ class Ability
           :read_note,
           :download_code
         ]
-
-        rules - project_disabled_features_rules(project)
       else
         group = if subject.kind_of?(Group)
                   subject
@@ -105,7 +102,28 @@ class Ability
           rules -= project_archived_rules
         end
 
-        rules - project_disabled_features_rules(project)
+        unless project.issues_enabled
+          rules -= named_abilities('issue')
+        end
+
+        unless project.merge_requests_enabled
+          rules -= named_abilities('merge_request')
+        end
+
+        unless project.issues_enabled or project.merge_requests_enabled
+          rules -= named_abilities('label')
+          rules -= named_abilities('milestone')
+        end
+
+        unless project.snippets_enabled
+          rules -= named_abilities('project_snippet')
+        end
+
+        unless project.wiki_enabled
+          rules -= named_abilities('wiki')
+        end
+
+        rules
       end
     end
 
@@ -188,33 +206,6 @@ class Ability
       ]
     end
 
-    def project_disabled_features_rules(project)
-      rules = []
-
-      unless project.issues_enabled
-        rules += named_abilities('issue')
-      end
-
-      unless project.merge_requests_enabled
-        rules += named_abilities('merge_request')
-      end
-
-      unless project.issues_enabled or project.merge_requests_enabled
-        rules += named_abilities('label')
-        rules += named_abilities('milestone')
-      end
-
-      unless project.snippets_enabled
-        rules += named_abilities('project_snippet')
-      end
-
-      unless project.wiki_enabled
-        rules += named_abilities('wiki')
-      end
-
-      rules
-    end
-
     def group_abilities(user, group)
       rules = []
 
@@ -233,8 +224,7 @@ class Ability
       if group.has_owner?(user) || user.admin?
         rules.push(*[
           :admin_group,
-          :admin_namespace,
-          :admin_group_member
+          :admin_namespace
         ])
       end
 
@@ -296,7 +286,7 @@ class Ability
       rules = []
       target_user = subject.user
       group = subject.group
-      can_manage = group_abilities(user, group).include?(:admin_group_member)
+      can_manage = group_abilities(user, group).include?(:admin_group)
 
       if can_manage && (user != target_user)
         rules << :update_group_member

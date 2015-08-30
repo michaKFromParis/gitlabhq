@@ -5,7 +5,6 @@ class Groups::GroupMembersController < Groups::ApplicationController
   # Authorize
   before_action :authorize_read_group!
   before_action :authorize_admin_group!, except: [:index, :leave]
-  before_action :authorize_admin_group_member!, only: [:create, :resend_invite]
 
   def index
     @project = @group.projects.find(params[:project_id]) if params[:project_id]
@@ -29,9 +28,6 @@ class Groups::GroupMembersController < Groups::ApplicationController
 
   def update
     @member = @group.group_members.find(params[:id])
-
-    return render_403 unless can?(current_user, :update_group_member, @member)
-
     @member.update_attributes(member_params)
   end
 

@@ -57,11 +57,10 @@ module Gitlab
 
             title = range.reference_title
             klass = reference_class(:commit_range)
-            data  = data_attribute(project.id)
 
             project_ref += '@' if project_ref
 
-            %(<a href="#{url}" #{data}
+            %(<a href="#{url}"
                  title="#{title}"
                  class="#{klass}">#{project_ref}#{range}</a>)
           else

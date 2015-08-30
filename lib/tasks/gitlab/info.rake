@@ -30,7 +30,8 @@ namespace :gitlab do
       # check database adapter
       database_adapter = ActiveRecord::Base.connection.adapter_name.downcase
 
-      project = Group.new(path: "some-group").projects.build(path: "some-project")
+      project = Project.new(path: "some-project")
+      project.path = "some-project"
       # construct clone URLs
       http_clone_url = project.http_url_to_repo
       ssh_clone_url  = project.ssh_url_to_repo

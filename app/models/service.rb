@@ -87,14 +87,8 @@ class Service < ActiveRecord::Base
     %w(push tag_push issue merge_request)
   end
 
-  def execute(data)
+  def execute
     # implement inside child
-  end
-
-  def test(data)
-    # default implementation
-    result = execute(data)
-    { success: result.present?, result: result }
   end
 
   def can_test?

@@ -60,16 +60,6 @@ class HipchatService < Service
     gate[room].send('GitLab', message, message_options)
   end
 
-  def test(data)
-    begin
-      result = execute(data)
-    rescue StandardError => error
-      return { success: false, result: error }
-    end
-
-    { success: true, result: result }
-  end
-
   private
 
   def gate

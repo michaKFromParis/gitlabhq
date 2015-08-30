@@ -8,5 +8,4 @@ class UnfoldForm
   attribute :bottom, Boolean
   attribute :unfold, Boolean, default: true
   attribute :offset, Integer
-  attribute :indent, Integer, default: 0
 end
